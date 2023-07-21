@@ -26,6 +26,10 @@
                             <h5>Transcription:</h5>
                             <p id="transcription-text"></p>
                         </div>
+                        <div>
+                            <!-- Agregar el elemento de audio -->
+                            <audio id="audioPlayer" controls style="display: none;"></audio>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -75,12 +79,20 @@
                             .then(function (response) {
                                 return response.json();
                             })
-                            .then(function (data) {
+                            .then(async function (data) {
                                 if (data.transcription) {
                                     transcriptionText.innerText = data.transcription;
                                     transcriptionResult.style.display = "block";
+
+                                    // Reproducir el archivo de audio en el cliente con un parámetro único para evitar la caché
+                                    const audioPlayer = document.getElementById("audioPlayer");
+                                    audioPlayer.src = data.audioURL + `?t=${Date.now()}`; // Agrega una marca de tiempo única
+                                    console.log("Ruta del audio: ", audioPlayer.src);
+                                    audioPlayer.style.display = "block";
+                                    audioPlayer.play();
+
                                     localStorage.setItem("transcription", data.transcription);
-                                    localStorage.setItem("audioFileName", data.audioFileName);
+                                    console.log("transcripción", data.transcription);
                                 } else {
                                     console.error("Error:", data.message);
                                 }
